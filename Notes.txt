@@ -1,0 +1,33 @@
+Log : Yazýlým, iþletim sistemleri, sunucular, donaným aygýtlarý olmak üzere birçok alanda ilgili konudaki meydana gelen olaylarýn kayýt altýna alýndýðý dosyalardýr.
+Tracing : Bir operasyonun baþtan sona izlenmesidir.
+Metrics : Uygulamadaki bazý iþlemlerin veya bazý çýktýlarýn sayýsal verileridir.
+
+Open Telemetry : Dil ve apm deðiþikliklerinde tutarsýzlýklarý önlemek için kullanýlan bir gatewaydir. Best practicedir.
+
+Jeager & Zipkin : Distributed sistem tracing tooludur. Trace data ve metrikleri görselleþtirebilir.
+
+Resource : Datayý kimin ürettiðiyle ilgili bilgilerdir. Service name, Version, Namespace, Instance
+
+Trace Provider (Open Telemetry) = Activity Source (.Net) : Datalarýn üretildiði ana sýnýf. Static yada singleton olmak zorundadýr.
+
+Span : Operasyonu ifade eder. Http isteði, veritabaný çaðrýsý gibi. Bu operasyonlarýn bir araya geldiði kavrama trace denir. Span .Net ekosisteminde Activity olarak geçer.
+
+Activity (Span) Çeþitleri :
+
+- Internal
+- Server
+- Client
+- Producer
+- Consumer
+
+Event Nedir :
+
+Herhangi bir T anýndaki durumu kaydetmemize karþýlýk geliyor. Log gibi deðildir. In Memprye kaydedilir.
+
+Activity (Span) Status :
+
+- Ok
+- Error
+- Unset
+
+Tag (.Net) = Attributes (OpenTelemetry) : Üretilen span ile ilgili ek bilgiler kaydetmemizi saðlar.
