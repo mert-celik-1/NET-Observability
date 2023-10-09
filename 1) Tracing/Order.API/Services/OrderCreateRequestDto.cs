@@ -3,7 +3,7 @@
     public record OrderCreateRequestDto
     {
         public int UserId { get; set; }
-        public List<OrderItemDto> Items { get; set; } = null!;
+        public List<Common.Shared.DTOs.OrderItemDto> Items { get; set; } = null!;
     }
 
     public record OrderItemDto

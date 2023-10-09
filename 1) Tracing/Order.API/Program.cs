@@ -1,8 +1,13 @@
 using Common.Shared;
 using Microsoft.EntityFrameworkCore;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Resources;
 using Order.API.Models;
+using Order.API.RedisServices;
 using Order.API.Services;
+using Order.API.StockServices;
 using Shared;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,15 +18,53 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<OrderService>();
+builder.Services.AddScoped<StockService>();
+builder.Services.AddOpenTelemetryExt(builder.Configuration);
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(sp =>
+{
+    var redisService = sp.GetService<RedisService>();
+
+    return redisService!.GetConnectionMultiplexer;
+
+});
+builder.Services.AddSingleton(_ =>
+{
+
+
+    return new RedisService(builder.Configuration);
+
+});
+
+
+builder.Services.AddHttpClient<StockService>(options =>
+{
+
+    options.BaseAddress = new Uri((builder.Configuration.GetSection("ApiServices")["StockApi"])!);
+
+});
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer"));
 });
 
-builder.Services.AddOpenTelemetryExt(builder.Configuration);
+
+
 
 var app = builder.Build();
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
