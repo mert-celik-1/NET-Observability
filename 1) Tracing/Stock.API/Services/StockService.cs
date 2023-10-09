@@ -6,6 +6,13 @@ namespace Stock.API.Services
 {
     public class StockService
     {
+        private readonly PaymentService _paymentService;
+
+        public StockService(PaymentService paymentService)
+        {
+            _paymentService = paymentService;
+        }
+
         private Dictionary<int, int> GetProductStockList()
         {
 
@@ -18,8 +25,11 @@ namespace Stock.API.Services
 
         }
 
+
         public async Task<ResponseDto<StockCheckAndPaymentProcessResponseDto>> CheckAndPaymentProcess(StockCheckAndPaymentProcessRequestDto request)
         {
+
+            var baggage = Activity.Current?.GetBaggageItem("userId");
 
             var productStockList = GetProductStockList();
 
@@ -41,9 +51,25 @@ namespace Stock.API.Services
             }
 
 
-            return ResponseDto<StockCheckAndPaymentProcessResponseDto>.Success(HttpStatusCode.OK.GetHashCode(), new() { Description = "ödeme süreci tamamlandı." });
+            var (isSuccess, failMessage) = await _paymentService.CreatePaymentProcess(new PaymentCreateRequestDto()
+            {
+                OrderCode = request.OrderCode,
+                TotalPrice = request.OrderItems.Sum(x => x.UnitPrice)
+            });
+
+            if (isSuccess)
+            {
+                return ResponseDto<StockCheckAndPaymentProcessResponseDto>.Success(HttpStatusCode.OK.GetHashCode(), new() { Description = "ödeme süreci tamamlandı." });
+            }
+
+
+            return ResponseDto<StockCheckAndPaymentProcessResponseDto>.Fail(HttpStatusCode.BadRequest.GetHashCode(), failMessage!);
+
 
         }
+
+
+
 
     }
 }

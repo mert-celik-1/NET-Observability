@@ -41,6 +41,7 @@ namespace Order.API.Services
             using var activity = ActivitySourceProvider.Source.StartActivity();
             activity?.AddEvent(new("Sipariş süreci başladı."));
 
+            activity.SetBaggage("userId", requestDto.UserId.ToString());
 
             var newOrder = new Models.Order()
             {
