@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MassTransit.Logging;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
@@ -25,6 +26,8 @@ namespace Shared
             {
               
                 options.AddSource(openTelemetryConstants!.ActivitySourceName)
+                                .AddSource(DiagnosticHeaders.DefaultListenerName)
+
                 .ConfigureResource(resource =>
                 {
                     resource.AddService(openTelemetryConstants.ServiceName, serviceVersion: openTelemetryConstants.ServiceVersion);
