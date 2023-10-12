@@ -13,12 +13,14 @@ namespace Order.API.Services
         private readonly AppDbContext _context;
         private readonly StockService _stockService;
         private readonly RedisService _redisService;
+        private readonly ILogger<OrderService> _logger;
 
-        public OrderService(AppDbContext context, StockService stockService,RedisService redisService)
+        public OrderService(AppDbContext context, StockService stockService,RedisService redisService, ILogger<OrderService> logger)
         {
             _context = context;
             _stockService = stockService;
             _redisService = redisService;
+            _logger = logger;
         }
 
         public async Task<OrderCreateResponseDto> CreateAsync(OrderCreateRequestDto requestDto)
@@ -61,6 +63,9 @@ namespace Order.API.Services
 
             _context.Orders.Add(newOrder);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Sipariş veritabanına kaydedildi.{@userId}", requestDto.UserId);
+
 
             StockCheckAndPaymentProcessRequestDto stockRequest = new();
 
